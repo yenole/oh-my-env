@@ -14,17 +14,17 @@ func main() {
 		if !ok {
 			goto help
 		}
-		cmd := obtain(os.Args[2:])
-		if err := cmd.Check(); err != nil {
+		_cmd := obtain(os.Args[2:])
+		if err := _cmd.Check(); err != nil {
 			fmt.Printf(`cmd:%v check:%v`, c, err)
 			return
 		}
 
-		if err := cmd.Execute(); err != nil {
+		if err := _cmd.Execute(); err != nil {
 			fmt.Printf(`cmd:%v execute:%v`, c, err)
 		}
+		return
 	}
-	return
 
 help:
 	fmt.Println(cmd.UseHelp())

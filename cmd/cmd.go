@@ -2,6 +2,23 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
+	"runtime"
+)
+
+const (
+	help = `Use:
+	env init %v
+	env env	[name] path
+	env view
+	env alias name [value]
+
+Developers:
+	auther:yenole
+	email:xusir92@gmail.com
+	https://yenole.com
+	https://github.com/yenole
+	https://gitee.com/yenole`
 )
 
 type Cmd interface {
@@ -20,17 +37,8 @@ var (
 )
 
 func UseHelp() string {
-	return `Use:
-	env init [bash|zsh]
-	env env	[name] path
-	env view
-	env alias name [value]
-
-Developers:
-	auther:Yenole
-	email:xusir92@gmail.com
-	https://yenole.com
-	https://github.com/yenole
-	https://gitee.com/yenole
-`
+	if runtime.GOOS == `windows` {
+		return fmt.Sprintf(help, ``)
+	}
+	return fmt.Sprintf(help, `[bash|zsh]`)
 }
