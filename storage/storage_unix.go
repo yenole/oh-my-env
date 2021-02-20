@@ -9,9 +9,9 @@ import (
 	"strings"
 )
 
-var profile = `./.profile`
+var profile = homeDir(`/.profile`)
 
-func (store *Storage) Profile() error {
+func (store *Storage) profile() error {
 	buffer := bytes.NewBuffer(make([]byte, 0, 1024))
 	cfg := store.cfg(`default`)
 	if len(cfg.Path) > 0 {

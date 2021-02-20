@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func TestObtain(t *testing.T) {
-	store, err := Obtain()
+func TestStore(t *testing.T) {
+	store, err := Load()
 	if err != nil {
 		panic(err)
 	}
@@ -27,6 +27,5 @@ func TestObtain(t *testing.T) {
 	fmt.Println(store.View())
 
 	fmt.Println(store.Flush())
-	fmt.Println(store.Profile())
 
 }

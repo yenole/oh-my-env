@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	storage = `./data.data`
+	storage = homeDir(`/data.data`)
 )
 
 type Storage struct {
@@ -67,23 +67,32 @@ func (store *Storage) Path(value string) *Storage {
 func (store *Storage) View() string {
 	buffer := bytes.NewBuffer(make([]byte, 0, 1024))
 	cfg := store.cfg(`default`)
-	buffer.WriteString("envi:\n")
-	for _, v := range cfg.Path {
-		buffer.WriteString(fmt.Sprintf("\tPATH -> %v\n", v))
+
+	if len(cfg.Path)+len(cfg.Envs) > 0 {
+		buffer.WriteString("envi:\n")
+		for _, v := range cfg.Path {
+			buffer.WriteString(fmt.Sprintf("\tPATH -> %v\n", v))
+		}
+
+		for k, v := range cfg.Envs {
+			buffer.WriteString(fmt.Sprintf("\t%v=%v\n", k, v))
+		}
 	}
 
-	for k, v := range cfg.Envs {
-		buffer.WriteString(fmt.Sprintf("\t%v=%v\n", k, v))
-	}
-
-	buffer.WriteString("alias:\n")
-	for k, v := range cfg.Alias {
-		buffer.WriteString(fmt.Sprintf("\t%v=\"%v\"\n", k, v))
+	if len(cfg.Alias) > 0 {
+		buffer.WriteString("alias:\n")
+		for k, v := range cfg.Alias {
+			buffer.WriteString(fmt.Sprintf("\t%v=\"%v\"\n", k, v))
+		}
 	}
 	return buffer.String()
 }
 
 func (store *Storage) Flush() error {
+	if err := store.profile(); err != nil {
+		return err
+	}
+
 	byts, err := json.Marshal(store.cfgs)
 	if err != nil {
 		return err
@@ -91,7 +100,7 @@ func (store *Storage) Flush() error {
 	return ioutil.WriteFile(storage, byts, 0777)
 }
 
-func Obtain() (*Storage, error) {
+func Load() (*Storage, error) {
 	if _, err := os.Lstat(storage); os.IsNotExist(err) {
 		return &Storage{cfgs: make(map[string]*cfg)}, nil
 	}
@@ -105,4 +114,9 @@ func Obtain() (*Storage, error) {
 		return nil, err
 	}
 	return &Storage{cfgs: cfgs}, nil
+}
+
+func homeDir(path string) string {
+	dir := filepath.Dir(os.Args[0])
+	return fmt.Sprint(dir, path)
 }
