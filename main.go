@@ -7,10 +7,6 @@ import (
 	"strings"
 )
 
-func Use() string {
-	return ""
-}
-
 func main() {
 	if len(os.Args) > 1 {
 		c := strings.TrimSpace(os.Args[1])
@@ -20,15 +16,17 @@ func main() {
 		}
 		cmd := obtain(os.Args[2:])
 		if err := cmd.Check(); err != nil {
-			fmt.Println(err)
+			fmt.Printf(`cmd:%v check:%v`, c, err)
+			return
 		}
 
 		if err := cmd.Execute(); err != nil {
-
+			fmt.Printf(`cmd:%v execute:%v`, c, err)
 		}
 	}
+	return
 
 help:
-	fmt.Println(Use())
+	fmt.Println(cmd.UseHelp())
 
 }
