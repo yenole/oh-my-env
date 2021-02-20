@@ -2,48 +2,33 @@ package main
 
 import (
 	"fmt"
+	"github.com/yenole/oh-my-env/cmd"
 	"os"
+	"strings"
 )
 
-var (
-	cmds = []Cmd{
-		{Name: "init", Desc: `env init [bash|zsh]`, Option: func(strings []string) error {
-			return nil
-		}, Invoke: func(strings []string) error {
-			return nil
-		}},
-		{Name: `add`, Desc: `env add [key] path`, Option: func(strings []string) error {
-			return nil
-		}, Invoke: func(strings []string) error {
-			return nil
-		}},
-		{Name: `del`, Desc: `env del key`, Option: func(strings []string) error {
-			return nil
-		}, Invoke: func(strings []string) error {
-			return nil
-		}},
-		{Name: `cfg`, Desc: `env cfg [name] [save|del]`, Option: func(strings []string) error {
-			return nil
-		}, Invoke: func(strings []string) error {
-			return nil
-		}},
-		{Name: `view`, Desc: `env view`, Option: func(strings []string) error {
-			return nil
-		}, Invoke: func(strings []string) error {
-			return nil
-		}},
-		{Name: `alias`, Desc: `env alias key [value]`, Option: func(strings []string) error {
-			return nil
-		}, Invoke: func(strings []string) error {
-			return nil
-		}},
-	}
-)
-
-func init() {
-
+func Use() string {
+	return ""
 }
 
 func main() {
-	fmt.Println(os.Args)
+	if len(os.Args) > 1 {
+		c := strings.TrimSpace(os.Args[1])
+		obtain, ok := cmd.Cmds[c]
+		if !ok {
+			goto help
+		}
+		cmd := obtain(os.Args[2:])
+		if err := cmd.Check(); err != nil {
+			fmt.Println(err)
+		}
+
+		if err := cmd.Execute(); err != nil {
+
+		}
+	}
+
+help:
+	fmt.Println(Use())
+
 }
